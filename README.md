@@ -40,7 +40,7 @@ TODO: It slows down development, fix above.
 #### Handy commands:
 * `docker stop $(docker ps --filter "name=airflow" -q)`
 * `docker rm $(docker ps --filter "name=airflow" -q)`
-* `docker rmi $(docker images dockerairflow_webserver -q)`
+* `docker rmi $(docker images dockerairflow_webserver -q) -f`
 
 
 ## Scale the number of workers
