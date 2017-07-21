@@ -30,7 +30,7 @@ services:
             - SMTP_USER=${SMTP_USER}
             - SMTP_PASSWORD=${SMTP_PASSWORD}
             - PRIEST_GIT_URL=${PRIEST_GIT_URL}
-            - PRIEST_BRANCH_NAME=${PRIEST_BRANCH_NAME}
+            - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
         ports:
@@ -60,7 +60,7 @@ services:
             - SMTP_USER=${SMTP_USER}
             - SMTP_PASSWORD=${SMTP_PASSWORD}
             - PRIEST_GIT_URL=${PRIEST_GIT_URL}
-            - PRIEST_BRANCH_NAME=${PRIEST_BRANCH_NAME}
+            - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
         ports:
@@ -92,7 +92,7 @@ services:
             - SMTP_USER=${SMTP_USER}
             - SMTP_PASSWORD=${SMTP_PASSWORD}
             - PRIEST_GIT_URL=${PRIEST_GIT_URL}
-            - PRIEST_BRANCH_NAME=${PRIEST_BRANCH_NAME}
+            - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
         command: scheduler
@@ -122,7 +122,7 @@ services:
             - SMTP_USER=${SMTP_USER}
             - SMTP_PASSWORD=${SMTP_PASSWORD}
             - PRIEST_GIT_URL=${PRIEST_GIT_URL}
-            - PRIEST_BRANCH_NAME=${PRIEST_BRANCH_NAME}
+            - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
         command: worker
