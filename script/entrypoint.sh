@@ -14,26 +14,30 @@ else
     POSTGRES_PORT=$(echo $POSTGRES_HOST_PORT | cut -f2 -d:)
 fi
 
-# Git clone and checkout
-if [ -d "$PRIEST_HOME" ] && [ "$1" = "webserver" ]; then
-    echo "Pulling $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
-    rm -rf $PRIEST_HOME
-    git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
-    rm -rf $AIRFLOW_HOME/dags
-    cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
-    pip install -r $PRIEST_HOME/requirements.txt
-else
-    echo "Cloning $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
-    git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
-    rm -rf $AIRFLOW_HOME/dags
-    cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
-    pip install -r $PRIEST_HOME/requirements.txt
-fi
+if [ "$1" = "webserver" ] ; then
 
-# Changing permissions
-if [ -d "$AIRFLOW_HOME/dags" ]; then
-    echo "Changing permissions"
-    chmod a+x $AIRFLOW_HOME/dags/*.sh
+    # Git clone and checkout
+    if [ -d "$PRIEST_HOME" ] ; then
+        echo "Pulling $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
+        rm -rf $PRIEST_HOME
+        git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
+        rm -rf $AIRFLOW_HOME/dags
+        cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
+        pip install -r $PRIEST_HOME/requirements.txt
+    else
+        echo "Cloning $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
+        git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
+        rm -rf $AIRFLOW_HOME/dags
+        cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
+        pip install -r $PRIEST_HOME/requirements.txt
+    fi
+
+    # Changing permissions
+    if [ -d "$AIRFLOW_HOME/dags" ]; then
+        echo "Changing permissions"
+        chmod a+x $AIRFLOW_HOME/dags/*.sh
+    fi
+
 fi
 
 # Load DAGs exemples (default: No)
