@@ -22,11 +22,13 @@ if [ -d "$PRIEST_HOME" ]; then
     rm -rf $AIRFLOW_HOME/dags
     cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
     pip install -r $PRIEST_HOME/requirements.txt
+    chmod a+x $PRIEST_HOME/dags/*.sh
 else
     echo "Cloning $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
     git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
     rm -rf $AIRFLOW_HOME/dags
     cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
+    chmod a+x $PRIEST_HOME/dags/*.sh
     pip install -r $PRIEST_HOME/requirements.txt
 fi
 
