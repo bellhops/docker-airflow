@@ -31,14 +31,14 @@ if [ "$1" = "webserver" ] ; then
         cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
         pip install -r $PRIEST_HOME/requirements.txt
     fi
-
-    # Changing permissions
-    if [ -d "$AIRFLOW_HOME/dags" ]; then
-        echo "Changing permissions"
-        chmod a+x $AIRFLOW_HOME/dags/*.sh
-    fi
-
 fi
+
+# Changing permissions
+if [ -d "$AIRFLOW_HOME/dags" ]; then
+    echo "Changing permissions"
+    chmod a+x $AIRFLOW_HOME/dags/*.sh
+fi
+
 
 # Load DAGs exemples (default: No)
 if [ "$LOAD_EX" = "y" ]; then
