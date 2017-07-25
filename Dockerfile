@@ -37,7 +37,7 @@ RUN set -ex \
         libblas-dev \
         liblapack-dev \
         libpq-dev \
-	libssl-dev \
+	    libssl-dev \
         python3-pip \
         python3-requests \
         apt-utils \
@@ -47,22 +47,26 @@ RUN set -ex \
         locales \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
-    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 RUN set -ex \
     && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
     && python3 -m pip install -U pip \
-    && pip -V \
+    && pip -V
+
+CMD echo "git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest"
+RUN git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest
+RUN cp -R ${AIRFLOW_HOME}/priest/dags ${AIRFLOW_HOME}/dags
+
 RUN set -ex \
     && pip install Cython \
     && pip install pytz \
     && pip install apache-airflow[s3,celery,postgres,hive,hdfs,jdbc]==$AIRFLOW_VERSION \
-    && pip install celery[redis]==3.1.17 
+    && pip install celery[redis]==3.1.17 \
+    && pip install flask-bcrypt==0.7.1
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
-RUN git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest
-RUN cp -R ${AIRFLOW_HOME}/priest/dags ${AIRFLOW_HOME}/dags
 RUN set -ex \
     && pip install -r ${AIRFLOW_HOME}/priest/requirements.txt
 

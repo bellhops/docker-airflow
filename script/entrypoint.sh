@@ -3,6 +3,7 @@
 AIRFLOW_HOME="/usr/local/airflow"
 CMD="airflow"
 TRY_LOOP="20"
+PRIEST_HOME=$AIRFLOW_HOME/shared/priest
 
 # Load DAGs exemples (default: Yes)
 if [ "$POSTGRES_HOST_PORT" = "postgres" ]; then
@@ -13,7 +14,23 @@ else
     POSTGRES_PORT=$(echo $POSTGRES_HOST_PORT | cut -f2 -d:)
 fi
 
-# Load DAGs exemples (default: Yes)
+# Git clone and checkout
+if [ -d "$PRIEST_HOME" ]; then
+    echo "Pulling $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
+    rm -rf $PRIEST_HOME
+    git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
+    rm -rf $AIRFLOW_HOME/dags
+    cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
+    pip install -r $PRIEST_HOME/requirements.txt
+else
+    echo "Cloning $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
+    git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
+    rm -rf $AIRFLOW_HOME/dags
+    cp -R $PRIEST_HOME/dags $AIRFLOW_HOME/dags
+    pip install -r $PRIEST_HOME/requirements.txt
+fi
+
+# Load DAGs exemples (default: No)
 if [ "$LOAD_EX" = "y" ]; then
     sed -i "s/load_examples = False/load_examples = True/" "$AIRFLOW_HOME"/airflow.cfg
 fi
@@ -72,6 +89,7 @@ then
   if [ "$1" = "webserver" ]; then
     echo "Initialize database..."
     $CMD initdb
+    python $PRIEST_HOME/default_variables.py
     exec $CMD webserver
   else
     sleep 10
@@ -84,6 +102,7 @@ then
   sed -i "s#broker_url = redis://\$REDIS_HOST:\$REDIS_PORT/\$REDIS_QUEUE#broker_url = redis://$REDIS_HOST:$REDIS_PORT/$REDIS_QUEUE#" "$AIRFLOW_HOME"/airflow.cfg
   echo "Initialize database..."
   $CMD initdb
+  python $PRIEST_HOME/default_variables.py
   exec $CMD webserver &
   exec $CMD scheduler
 # By default we use SequentialExecutor
@@ -96,5 +115,6 @@ else
   sed -i "s#sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@postgres/airflow#sql_alchemy_conn = sqlite:////usr/local/airflow/airflow.db#" "$AIRFLOW_HOME"/airflow.cfg
   echo "Initialize database..."
   $CMD initdb
+  python $PRIEST_HOME/default_variables.py
   exec $CMD webserver
 fi
