@@ -15,7 +15,7 @@ else
 fi
 
 # Git clone and checkout
-if [ -d "$PRIEST_HOME" ]; then
+if [ -d "$PRIEST_HOME" ] && [ "$1" = "webserver" ]; then
     echo "Pulling $PRIEST_GIT_BRANCH FROM $PRIEST_GIT_URL"
     rm -rf $PRIEST_HOME
     git clone -b $PRIEST_GIT_BRANCH https://$GIT_KEY@$PRIEST_GIT_URL $PRIEST_HOME
