@@ -69,5 +69,5 @@ Check [Airflow Documentation](https://pythonhosted.org/airflow/)
 
 # How to push custom docker image into bellhops docker registry
 * Add [this](https://bellhops.slack.com/archives/G0CK6CKE1/p1501004329161573) insecure bellhops registry to your local machine using this [answer](https://stackoverflow.com/a/39492340)
-* docker tag <your-custom-image> <registry-ip:port>/<custom-name>
-* docker push <registry-ip:port>/<custom-name>
+* `docker tag <your-custom-image> <registry-ip:port>/<custom-name>`
+* `docker push <registry-ip:port>/<custom-name>`
