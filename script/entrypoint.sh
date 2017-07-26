@@ -14,6 +14,12 @@ else
     POSTGRES_PORT=$(echo $POSTGRES_HOST_PORT | cut -f2 -d:)
 fi
 
+# Load DAGs exemples (default: Yes)
+if [ -n "$ENDPOINT_URL" ]; then
+    echo "Replacing endpoint url"
+    sed -i "s/base_url = http://localhost:8080/base_url = $ENDPOINT_URL/" "$AIRFLOW_HOME"/airflow.cfg
+fi
+
 if [ "$1" = "webserver" ] ; then
 
     # Git clone and checkout
