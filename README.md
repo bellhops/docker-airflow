@@ -38,7 +38,7 @@ drwxr-xr-x  21 naveen  staff   714 Jul 13 14:20 ..
 #### Handy commands:
 * `docker stop $(docker ps --filter "name=airflow" -q)`
 * `docker rm $(docker ps --filter "name=airflow" -q)`
-* `docker rmi $(docker images dockerairflow_webserver -q) -f`
+* `docker rmi $(docker-compose -f docker-compose-CeleryExecutor.yml images -q) -f`
 
 
 ## Scale the number of workers
