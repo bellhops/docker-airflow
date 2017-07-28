@@ -1,6 +1,6 @@
 # VERSION 1.8.1
 # AUTHOR: Naveen "nave91"
-# DESCRIPTION: Basic Airflow container with priest
+# DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
 # SOURCE: https://github.com/bellhops/docker-airflow
 
@@ -15,8 +15,6 @@ ENV TERM linux
 ARG AIRFLOW_VERSION=1.8.1
 ARG AIRFLOW_HOME=/usr/local/airflow
 ARG GIT_KEY=testkey
-ARG PRIEST_GIT_URL=github.com/bellhops/priest
-ARG PRIEST_GIT_BRANCH=master
 
 # Define en_US.
 ENV LANGUAGE en_US.UTF-8
@@ -53,10 +51,6 @@ RUN set -ex \
     && python3 -m pip install -U pip \
     && pip -V
 
-CMD echo "git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest"
-RUN git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest
-RUN cp -R ${AIRFLOW_HOME}/priest/dags ${AIRFLOW_HOME}/dags
-
 RUN set -ex \
     && pip install Cython \
     && pip install pytz \
@@ -67,14 +61,10 @@ RUN set -ex \
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
-RUN set -ex \
-    && pip install -r ${AIRFLOW_HOME}/priest/requirements.txt
-
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
 EXPOSE 8080 5555 8793
 
 USER airflow
-ENV PYTHONPATH $PYTHONPATH:${AIRFLOW_HOME}/priest/src
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
