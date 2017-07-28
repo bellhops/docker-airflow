@@ -34,8 +34,6 @@ drwxr-xr-x  21 naveen  staff   714 Jul 13 14:20 ..
 * All standard docker-compose commands should work now.
 
 ## Priest Development
-_Currently we have to kill all docker airflow containers and rebuild them to get most up-to-date priest code._
-TODO: It slows down development, fix above.
 
 #### Handy commands:
 * `docker stop $(docker ps --filter "name=airflow" -q)`
