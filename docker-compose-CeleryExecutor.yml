@@ -1,9 +1,10 @@
-version: '2'
+version: '3.0'
 services:
     redis:
         image: 'redis:3.2.7'
         volumes:
            - ./shared:${AIRFLOW_HOME}/shared
+        privileged: true
 
     webserver:
         build:
@@ -33,6 +34,7 @@ services:
             - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
+        privileged: true
         ports:
             - "8080:8080"
         command: webserver
@@ -63,6 +65,7 @@ services:
             - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
+        privileged: true
         ports:
             - "5555:5555"
         command: flower
@@ -95,6 +98,7 @@ services:
             - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
+        privileged: true
         command: scheduler
 
     worker:
@@ -125,4 +129,5 @@ services:
             - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:${AIRFLOW_HOME}/shared
+        privileged: true
         command: worker

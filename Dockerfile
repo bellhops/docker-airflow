@@ -26,8 +26,23 @@ ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+# DOcker inside docker
 RUN set -ex \
     && apt-get update -yqq \
+    && apt-get install -yqq --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg2 \
+        software-properties-common
+RUN set -ex \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+    && apt-get update -yqq \
+    && apt-get install -yqq docker-ce
+
+# Airflow installs
+RUN set -ex \
     && apt-get install -yqq --no-install-recommends \
         python3-dev \
         libkrb5-dev \
@@ -42,7 +57,7 @@ RUN set -ex \
         python3-requests \
         apt-utils \
         curl \
-	git \
+	    git \
         netcat \
         locales \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
@@ -53,9 +68,9 @@ RUN set -ex \
     && python3 -m pip install -U pip \
     && pip -V
 
-CMD echo "git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest"
-RUN git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/priest
-RUN cp -R ${AIRFLOW_HOME}/priest/dags ${AIRFLOW_HOME}/dags
+CMD echo "git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/shared/priest"
+RUN git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/shared/priest
+RUN cp -R ${AIRFLOW_HOME}/shared/priest/dags ${AIRFLOW_HOME}/dags
 
 RUN set -ex \
     && pip install Cython \
@@ -68,13 +83,18 @@ COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN set -ex \
-    && pip install -r ${AIRFLOW_HOME}/priest/requirements.txt
+    && pip install -r ${AIRFLOW_HOME}/shared/priest/requirements.txt
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
+
+# Add sudo permissions for debugging
+RUN set -ex \
+    && apt-get install sudo \
+    && echo "airflow:airflow" | chpasswd \
+    && usermod -aG sudo airflow
 
 EXPOSE 8080 5555 8793
 
 USER airflow
-ENV PYTHONPATH $PYTHONPATH:${AIRFLOW_HOME}/priest/src
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]

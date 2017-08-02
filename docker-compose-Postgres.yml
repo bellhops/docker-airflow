@@ -6,3 +6,5 @@ services:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
+        volumes:
+            - ./postgresdata:/var/lib/postgresql/data
