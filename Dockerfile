@@ -70,7 +70,6 @@ RUN set -ex \
 
 CMD echo "git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/shared/priest"
 RUN git clone -b ${PRIEST_GIT_BRANCH} https://${GIT_KEY}@${PRIEST_GIT_URL} ${AIRFLOW_HOME}/shared/priest
-RUN cp -R ${AIRFLOW_HOME}/shared/priest/dags ${AIRFLOW_HOME}/dags
 
 RUN set -ex \
     && pip install Cython \
@@ -87,11 +86,11 @@ RUN set -ex \
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
-# Add sudo permissions for debugging
-RUN set -ex \
-    && apt-get install sudo \
-    && echo "airflow:airflow" | chpasswd \
-    && usermod -aG sudo airflow
+## Add sudo permissions for debugging
+#RUN set -ex \
+#    && apt-get install sudo \
+#    && echo "airflow:airflow" | chpasswd \
+#    && usermod -aG sudo airflow
 
 EXPOSE 8080 5555 8793
 
