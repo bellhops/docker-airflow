@@ -28,8 +28,8 @@ drwxr-xr-x  21 naveen  staff   714 Jul 13 14:20 ..
 -rw-r--r--   1 naveen  staff     5 Jul  7 11:25 .dockerignore
 -rw-r--r--   1 naveen  staff   453 Jul 18 14:28 .env
 ```
-* Run `docker-compose -f docker-compose-Postgres.yml -d up`
-* Run `docker-compose -f docker-compose-CeleryExecutor -d up`
+* Run `docker-compose -f docker-compose-Postgres.yml up -d`
+* Run `docker-compose -f docker-compose-CeleryExecutor up -d`
 * Note: `-d` starts in detached mode and its optional.
 * All standard docker-compose commands should work now.
 
