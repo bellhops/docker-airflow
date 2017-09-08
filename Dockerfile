@@ -77,6 +77,7 @@ RUN set -ex \
     && pip install pytz \
     && pip install apache-airflow[s3,celery,postgres,hive,hdfs,jdbc]==$AIRFLOW_VERSION \
     && pip install celery[redis]==3.1.17 \
+    && pip install Flask-OAuthlib==0.9.4 \
     && pip install flask-bcrypt==0.7.1
 
 COPY script/entrypoint.sh /entrypoint.sh
