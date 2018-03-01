@@ -1,11 +1,11 @@
 # VERSION 1.9.0-2
-# AUTHOR: Matthieu "Puckel_" Roisil
+# AUTHOR: Naveen L
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
 # SOURCE: https://github.com/puckel/docker-airflow
 
 FROM python:3.6-slim
-MAINTAINER Puckel_
+MAINTAINER Naveen
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -21,6 +21,21 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
+
+# Docker inside docker
+RUN set -ex \
+    && apt-get update -yqq \
+    && apt-get install -yqq --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg2 \
+        software-properties-common
+RUN set -ex \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+    && apt-get update -yqq \
+    && apt-get install -yqq docker-ce
 
 RUN set -ex \
     && buildDeps=' \
@@ -72,6 +87,12 @@ COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
+
+## Add sudo permissions for debugging
+#RUN set -ex \
+#    && apt-get install sudo \
+#    && echo "airflow:airflow" | chpasswd \
+#    && usermod -aG sudo airflow
 
 EXPOSE 8080 5555 8793
 

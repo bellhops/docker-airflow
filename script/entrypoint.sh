@@ -36,6 +36,11 @@ if [ -e "/requirements.txt" ]; then
     $(which pip) install --user -r /requirements.txt
 fi
 
+# Install custom priest python package if requirements.txt is present
+if [ -e "/usr/local/airflow/shared/priest/requirements.txt" ]; then
+    $(which pip) install --user -r /usr/local/airflow/shared/priest/requirements.txt
+fi
+
 if [ -n "$REDIS_PASSWORD" ]; then
     REDIS_PREFIX=:${REDIS_PASSWORD}@
 else
