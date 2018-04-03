@@ -1,8 +1,9 @@
+### User added ###
 .env
-.idea/
-pgdata/
-postgresdata/
-shared/
+.idea*
+pgdata/*
+postgresdata/*
+shared/*
 
 ### Vim ###
 [._]*.s[a-w][a-z]
