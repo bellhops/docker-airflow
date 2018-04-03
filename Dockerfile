@@ -1,11 +1,11 @@
 # VERSION 1.9.0-2
-# AUTHOR: Matthieu "Puckel_" Roisil
+# AUTHOR: Naveen L
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
 # SOURCE: https://github.com/puckel/docker-airflow
 
-FROM python:3.6-slim
-MAINTAINER Puckel_
+FROM python:3.6
+MAINTAINER Naveen
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -22,6 +22,21 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 
+# Docker inside docker
+RUN set -ex \
+    && apt-get update -yqq \
+    && apt-get install -yqq --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg2 \
+        software-properties-common
+RUN set -ex \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+    && apt-get update -yqq \
+    && apt-get install -yqq docker-ce
+
 RUN set -ex \
     && buildDeps=' \
         python3-dev \
@@ -33,12 +48,12 @@ RUN set -ex \
         libblas-dev \
         liblapack-dev \
         libpq-dev \
-        git \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
     && apt-get install -yqq --no-install-recommends \
         $buildDeps \
+        libpq-dev \
         python3-pip \
         python3-requests \
         apt-utils \
@@ -46,6 +61,9 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        git \
+        postgresql \
+        python-virtualenv \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -56,8 +74,8 @@ RUN set -ex \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
-    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc]==$AIRFLOW_VERSION \
-    && pip install celery[redis]==4.0.2 \
+    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,s3]==$AIRFLOW_VERSION \
+    && pip install celery[redis]==4.1.0 \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
     && rm -rf \
@@ -72,6 +90,12 @@ COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
+
+## Add sudo permissions for debugging
+#RUN set -ex \
+#    && apt-get install sudo \
+#    && echo "airflow:airflow" | chpasswd \
+#    && usermod -aG sudo airflow
 
 EXPOSE 8080 5555 8793
 

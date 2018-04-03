@@ -16,6 +16,17 @@ TRY_LOOP="20"
 : "${AIRFLOW__CORE__FERNET_KEY:=${FERNET_KEY:=$(python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)")}}"
 : "${AIRFLOW__CORE__EXECUTOR:=${EXECUTOR:-Sequential}Executor}"
 
+
+if [ -n "$REDIS_PASSWORD" ]; then
+    REDIS_PREFIX=:${REDIS_PASSWORD}@
+else
+    REDIS_PREFIX=
+fi
+
+AIRFLOW__CORE__SQL_ALCHEMY_CONN="postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
+AIRFLOW__CELERY__BROKER_URL="redis://$REDIS_PREFIX$REDIS_HOST:$REDIS_PORT/1"
+AIRFLOW__CELERY__CELERY_RESULT_BACKEND="db+postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
+
 export \
   AIRFLOW__CELERY__BROKER_URL \
   AIRFLOW__CELERY__CELERY_RESULT_BACKEND \
@@ -23,7 +34,6 @@ export \
   AIRFLOW__CORE__FERNET_KEY \
   AIRFLOW__CORE__LOAD_EXAMPLES \
   AIRFLOW__CORE__SQL_ALCHEMY_CONN \
-
 
 # Load DAGs exemples (default: Yes)
 if [[ -z "$AIRFLOW__CORE__LOAD_EXAMPLES" && "${LOAD_EX:=n}" == n ]]
@@ -36,10 +46,9 @@ if [ -e "/requirements.txt" ]; then
     $(which pip) install --user -r /requirements.txt
 fi
 
-if [ -n "$REDIS_PASSWORD" ]; then
-    REDIS_PREFIX=:${REDIS_PASSWORD}@
-else
-    REDIS_PREFIX=
+# Install custom priest python package if requirements.txt is present
+if [ -e "/usr/local/airflow/shared/priest/requirements.txt" ]; then
+    $(which pip) install --user -r /usr/local/airflow/shared/priest/requirements.txt
 fi
 
 wait_for_port() {
@@ -63,10 +72,6 @@ wait_for_redis() {
     wait_for_port "Redis" "$REDIS_HOST" "$REDIS_PORT"
   fi
 }
-
-AIRFLOW__CORE__SQL_ALCHEMY_CONN="postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
-AIRFLOW__CELERY__BROKER_URL="redis://$REDIS_PREFIX$REDIS_HOST:$REDIS_PORT/1"
-AIRFLOW__CELERY__CELERY_RESULT_BACKEND="db+postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
 
 case "$1" in
   webserver)
