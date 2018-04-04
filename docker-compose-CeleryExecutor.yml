@@ -20,6 +20,8 @@ services:
             - GIT_KEY=${GIT_KEY}
             - FERNET_KEY=${FERNET_KEY}
             - EXECUTOR=Celery
+            - REDIS_HOST=${REDIS_HOST}
+            - REDIS_PORT=${REDIS_PORT}
             - POSTGRES_HOST=${POSTGRES_HOST}
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -48,6 +50,8 @@ services:
             - redis
         environment:
             - EXECUTOR=Celery
+            - REDIS_HOST=${REDIS_HOST}
+            - REDIS_PORT=${REDIS_PORT}
         ports:
             - "5555:5555"
         command: flower
@@ -68,6 +72,8 @@ services:
             - GIT_KEY=${GIT_KEY}
             - FERNET_KEY=${FERNET_KEY}
             - EXECUTOR=Celery
+            - REDIS_HOST=${REDIS_HOST}
+            - REDIS_PORT=${REDIS_PORT}
             - POSTGRES_HOST=${POSTGRES_HOST}
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -92,6 +98,8 @@ services:
             - GIT_KEY=${GIT_KEY}
             - FERNET_KEY=${FERNET_KEY}
             - EXECUTOR=Celery
+            - REDIS_HOST=${REDIS_HOST}
+            - REDIS_PORT=${REDIS_PORT}
             - POSTGRES_HOST=${POSTGRES_HOST}
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
