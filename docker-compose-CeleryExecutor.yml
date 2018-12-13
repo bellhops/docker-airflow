@@ -28,9 +28,9 @@ services:
             - PRIEST_GIT_BRANCH=${PRIEST_GIT_BRANCH}
         volumes:
             - ./shared:/usr/local/airflow/shared
+            - /tmp:/tmp
         tmpfs:
           - /run
-          - /tmp
         ports:
             - "8080:8080"
         command: webserver
@@ -51,7 +51,6 @@ services:
             - redis
         tmpfs:
           - /run
-          - /tmp
         environment:
             - EXECUTOR=Celery
         ports:
@@ -69,9 +68,9 @@ services:
             - webserver
         volumes:
             - ./shared:/usr/local/airflow/shared
+            - /tmp:/tmp
         tmpfs:
           - /run
-          - /tmp
         environment:
             - LOAD_EX=n
             - GIT_KEY=${GIT_KEY}
@@ -96,9 +95,9 @@ services:
             - scheduler
         volumes:
             - ./shared:/usr/local/airflow/shared
+            - /tmp:/tmp
         tmpfs:
           - /run
-          - /tmp
         environment:
             - LOAD_EX=n
             - GIT_KEY=${GIT_KEY}
