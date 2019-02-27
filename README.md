@@ -17,29 +17,14 @@ This repository contains **Dockerfile** of [apache-airflow](https://github.com/a
 
 /!\ If you want to use Airflow using Python 2, use TAG [1.8.1](https://github.com/puckel/docker-airflow/releases/tag/1.8.1)
 
-## Installation
-
-Pull the image from the Docker repository.
-
-        docker pull puckel/docker-airflow
 
 ## Build
 
 For example, if you need to install [Extra Packages](https://pythonhosted.org/airflow/installation.html#extra-package), edit the Dockerfile and then build it.
 
-        docker build --rm -t puckel/docker-airflow .
+        docker build --rm -t docker-airflow .
 
 ## Usage
-
-By default, docker-airflow runs Airflow with **SequentialExecutor** :
-
-        docker run -d -p 8080:8080 puckel/docker-airflow
-
-If you want to run another executor, use the other docker-compose.yml files provided in this repository.
-
-For **LocalExecutor** :
-
-        docker-compose -f docker-compose-LocalExecutor.yml up -d
 
 For **CeleryExecutor** :
 
